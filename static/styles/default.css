@@ -1,0 +1,35 @@
+h1{
+    text-align: left;
+    margin-left:21%;
+
+
+}
+body{
+    background-color: beige;
+    text-align: center;
+    align-items: center;
+    font-size: x-large;
+    margin-left: 32%;
+    text-indent: -50px;
+
+
+}
+.body1{
+    background-color: beige;
+    text-align:center;
+    align-items:center;
+    font-size:x-large;
+    text-indent: 10px;
+    margin-left: auto;
+
+}
+pre{
+    tab-size: 4;
+}
+
+div{
+    position: absolute;
+    bottom: 0;
+    text-indent: 180px;
+
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="static/styles/products.css">
+
+</head>
+<h3>Y.G.'s Protein Corner</h3>
+
+<body>
+    <br>
+    <form action = "/" method = "POST">
+    Username:<input type="text"name="username"><br>
+    Password:<input type="text"name="password"><br>
+    <input type="submit"name="submit"> <br>
+    </form>
+
+    {% if error != "" %}
+        <a href="/createaccount">{{error}}</a></ul>
+    {% endif %}
+</body>
+</html>

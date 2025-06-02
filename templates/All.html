@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="static\styles\home.css">
+
+</head>
+<body>
+
+    <h1>Welcome to Y.G.'s Protein Corner. 
+        <a href="/Cart"><img src="static\images\shoppingcart.jpg" width="5%" class = "cart"></a>
+        <a href="/userinfo"><img src="static\images\profile.jpg" width="5%" class = "cart"></a>
+        <br>
+    </h1> 
+
+
+    <a href="/home">Return home</a><br>
+
+    {% for value in values %}
+        <ul><img src= {{value['image']}} width = "20%"><br>{{value['name']}} <br> Product ID: {{value['id']}}<br> Price: {{value['price']}}<br> Quantity: {{value['stock']}}<br>
+            Select Quantity: 
+            <form action= "/All" method="POST">
+                <input type="hidden" name="prod" value="{{ value['id'] }}">
+                <input type="number" name="quantity" id="quantity" value="1" min="0" max="{{ value['stock'] }}" required>
+                <button type="submit">Add to Cart</button>
+            </form>
+        </ul>       
+    {% endfor %}
+</body>
+</html>

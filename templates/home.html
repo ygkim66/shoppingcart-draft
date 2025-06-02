@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="static/styles/products.css">
+
+</head>
+<body>
+
+    <h1>Welcome to Y.G.'s Protein Corner.
+        <a href="/Cart"><img src="static\images\shoppingcart.jpg" width="5%" class = "cart"></a>
+        <a href="/userinfo"><img src="static\images\profile.jpg" width="5%" class = "cart"></a>
+        <br>
+    </h1>  
+    <h2>What are you looking for? </h2>
+
+    <!--IF ____ = PROTEIN BAR BUTTON: THEN DISPLAY CERTAIN THINGS LIKE IN LAB 6
+    OR IF ____ = PROTEIN BAR BUTTON: THEN REDIRECT TO A DIFFERENT PAGE? UP TO ME IG??? --->
+
+
+    <home>
+        <form action = "/home" method = "POST">
+            Search for Item: <input type="text"name="search"><br>
+            <button type="submit"> Search </button> 
+            <br>
+            <br>
+        </form>
+        <br> Search by category: <br>
+        <a href="/All">Shop All</a>
+        <a href="/ProteinBars">Protein Bars</a>
+        <a href="/ProteinShakes">Protein Shakes</a>
+        <a href="/Creatine">Creatine</a>
+        <a href="/Caffeine">Caffeine</a>
+    </home>
+   
+
+<br>
+<div>{{login}}<logout><a href="/logout">Logout?</a></logout> <br>
+</div>
+
+</body>
+
+
+</html>
