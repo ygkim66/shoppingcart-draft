@@ -8,33 +8,62 @@ app.secret_key = "CHANGE ME"
 def login():
   error = "Create Account?"
   login = "Successfully logged in!"
-  # If the username/password is correct, log them in and redirect them to the home page. Remember to set your session variables! 
+  # If the username/password is correct, log them in and redirect them to the home page.
   connection = sqlite3.connect("myDatabase.db")
   connection.row_factory = sqlite3.Row
   cursor = connection.cursor()
-
+  
   if request.method == 'POST':
     session['user'] = request.form["username"]
     session['pw'] = request.form["password"]
-    cursor.execute("SELECT * FROM users WHERE username = ?", (session['user'],))
-    values = cursor.fetchone()
+    cursor.execute("SELECT password FROM users WHERE username = ?", (session['user'],))
+    values = cursor.fetchone()[0]
+    #print(values)
     connection.commit()
     connection.close()
     login = "Successful"
-    #print(values)
-    #YEANA NOTE:
-    #CREATE A SEPARATE LINK IN THE HTML FILE WHERE YOU CAN CREATE AN ACCOUNT I
-    if values is None:
-      error = "Username or password does not exist. Create account?" #LINK TO THE DEF CREATEACCOUNT METHOD
-      return render_template("login.html", error = error, values = values)
-    elif session['pw'] != values['password']:
-      error = "Username or password does not exist. Create account?" #LINK TO THE DEF CREATEACCOUNT METHOD
-      return render_template("login.html", error = error, values = values)
-    elif session['pw'] == values['password']:
 
+    if values is None or session['pw'] != values:
+      error = "Username or password does not exist. Create account?" #LINK TO THE DEF CREATEACCOUNT METHOD
+      return render_template("login.html", error = error, values = values)
+    elif session['pw'] == values:
       return redirect('/home')
 
   return render_template("login.html", error = error)
+
+#
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+  # Log the user out and redirect them to the login page
+  session.pop('user', None)
+  session.pop('pw', None)
+  session.pop('user_type', None)
+  session.pop('cart', None)
+  session.pop('q', None) 
+  session.clear()
+  return redirect('/')
+
+@app.route('/createaccount', methods=['GET', 'POST'])
+def create():
+  message = ""
+  if request.method == 'POST':
+    name = request.form["name"]
+    user = request.form["username"]
+    pw = request.form["password"]
+    email = request.form["email"]
+
+    connection = sqlite3.connect("myDatabase.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE username = ?", (user,))
+    values = cursor.fetchall()[0]
+    if values is None:
+      cursor.execute("INSERT INTO users (username, password, name, email) VALUES (?,?,?, ?)", (user, pw, name, email))
+      message = "Account created! Please return to the login page"
+    else:
+      message = "Username already exists. Please try again."
+    connection.commit()
+    connection.close()
+  return render_template('accountCreation.html', message = message)
 
 @app.route('/userinfo', methods=['GET', 'POST'])
 def userinfo():
@@ -182,38 +211,5 @@ def Cart():
   return render_template("Cart.html", values = values, keys = keys)
 
 
-
-#
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-  # Log the user out and redirect them to the login page
-  session.pop('user', None)
-  session.pop('pw', None)
-  session.pop('user_type', None)
-  session.pop('cart', None)
-  session.pop('q', None) 
-  session.clear()
-  return redirect('/')
-
-@app.route('/createaccount', methods=['GET', 'POST'])
-def create():
-  message = ""
-  if request.method == 'POST':
-    name = request.form["name"]
-    user = request.form["username"]
-    pw = request.form["password"]
-    email = request.form["email"]
-
-    connection = sqlite3.connect("myDatabase.db")
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO users (username, password, name, email) VALUES (?,?,?, ?)", (user, pw, name, email))
-
-    values = cursor.fetchall()
-    connection.commit()
-    connection.close()
-
-    message = "Account created! Please return to the login page"
-
-  return render_template('accountCreation.html', message = message)
 
 app.run(host='0.0.0.0', port=8080)
