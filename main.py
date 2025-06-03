@@ -89,7 +89,9 @@ def home():
     session['cart'] = {'Your items': "quantity"}
 
   if request.method == 'POST':
-    connection = sqlite3.connect("myDatabase.db")
+    session['search'] = request.form['search']    
+    return redirect('/search')
+    '''connection = sqlite3.connect("myDatabase.db")
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
     search = request.form['search']
@@ -99,7 +101,7 @@ def home():
     print(values)
     connection.commit()
     connection.close()
-    return render_template("All.html", values = values)
+    return render_template("All.html", values = values)'''
     #cursor.execute("SELECT * FROM users WHERE username = ?" (session['user']))
   return render_template("home.html", login = login)#, values = values), students = values, user = session['name'])
 
@@ -107,23 +109,47 @@ def home():
 @app.route('/ProteinBars', methods=['GET', 'POST'])
 def ProteinBars():
   connection = sqlite3.connect("myDatabase.db")
-  #connection = sqlite3.connect("store_schema.sql")
   connection.row_factory = sqlite3.Row
   cursor = connection.cursor()
-
-  return render_template("ProteinBars.html")
+  cursor.execute("SELECT * FROM items WHERE type = ? ", ("Protein Bar",),)
+  values=cursor.fetchall() 
+  connection.commit()
+  connection.close()
+  return render_template("All.html", values = values)
 
 @app.route('/ProteinShakes')
 def ProteinShakes():
-  return render_template("ProteinShakes.html")
+  connection = sqlite3.connect("myDatabase.db")
+  connection.row_factory = sqlite3.Row
+  cursor = connection.cursor()
+  cursor.execute("SELECT * FROM items WHERE type = ? ", ("Protein Shake",),)
+  values=cursor.fetchall() 
+  connection.commit()
+  connection.close()
+  return render_template("All.html", values = values)
+ # return render_template("ProteinShakes.html")
 
 @app.route('/Creatine')
 def Creatine():
-  return render_template("Creatine.html")
+  connection = sqlite3.connect("myDatabase.db")
+  connection.row_factory = sqlite3.Row
+  cursor = connection.cursor()
+  cursor.execute("SELECT * FROM items WHERE type = ? ", ("Creatine",),)
+  values=cursor.fetchall() 
+  connection.commit()
+  connection.close()
+  return render_template("All.html", values = values)
 
 @app.route('/Caffeine')
 def Caffeine():
-  return render_template("Caffeine.html")
+  connection = sqlite3.connect("myDatabase.db")
+  connection.row_factory = sqlite3.Row
+  cursor = connection.cursor()
+  cursor.execute("SELECT * FROM items WHERE type = ? ", ("Caffeine",),)
+  values=cursor.fetchall() 
+  connection.commit()
+  connection.close()
+  return render_template("All.html", values = values)
 
 @app.route('/All', methods=['GET', 'POST'])
 def All():
@@ -177,17 +203,18 @@ def checkout():
 @app.route('/search')
 def search():
   #TODO:
-  if request.method == 'POST':
-    connection = sqlite3.connect("myDatabase.db")
-    connection.row_factory = sqlite3.Row
-    cursor = connection.cursor()
-    search = request.form['search']
-    cursor.execute("SELECT * FROM items LIKE ?", (search))
-    values=cursor.fetchall() 
+  #if request.method == 'POST':
+  connection = sqlite3.connect("myDatabase.db")
+  connection.row_factory = sqlite3.Row
+  cursor = connection.cursor()
+  search = session['search']
+  cursor.execute("SELECT * FROM items WHERE name LIKE ? OR name LIKE ?", (('%' + search), (search + '%'),))
+  session.pop('search', None)
+  values=cursor.fetchall() 
 
-    connection.commit()
-    connection.close()
-    return render_template("All.html", values = values, items = values['stock'])
+  connection.commit()
+  connection.close()
+  return render_template("All.html", values = values)
 
 @app.route('/Cart', methods = ['GET', 'POST'])
 def Cart():
