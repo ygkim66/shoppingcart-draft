@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, redirect, url_for, request
+from flask import Flask, session, render_template, redirect, url_for, request, flash
 import sqlite3
 app = Flask('app')
 app.debug = True
@@ -17,16 +17,16 @@ def login():
     session['user'] = request.form["username"]
     session['pw'] = request.form["password"]
     cursor.execute("SELECT password FROM users WHERE username = ?", (session['user'],))
-    values = cursor.fetchone()[0]
+    values = cursor.fetchone()
     #print(values)
     connection.commit()
     connection.close()
     login = "Successful"
 
-    if values is None or session['pw'] != values:
+    if values is None or session['pw'] != values[0]:
       error = "Username or password does not exist. Create account?" #LINK TO THE DEF CREATEACCOUNT METHOD
       return render_template("login.html", error = error, values = values)
-    elif session['pw'] == values:
+    elif session['pw'] == values[0]:
       return redirect('/home')
 
   return render_template("login.html", error = error)
@@ -55,8 +55,10 @@ def create():
     connection = sqlite3.connect("myDatabase.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE username = ?", (user,))
-    values = cursor.fetchall()[0]
-    if values is None:
+    values = cursor.fetchall()
+    print("DEBUG: " + str(values))
+    print(values)
+    if len(values) == 0:
       cursor.execute("INSERT INTO users (username, password, name, email) VALUES (?,?,?, ?)", (user, pw, name, email))
       message = "Account created! Please return to the login page"
     else:
