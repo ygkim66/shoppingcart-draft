@@ -89,6 +89,7 @@ def home():
   if 'user' in session:
     login = "Successfully logged in."
     session['cart'] = {'Your items': "quantity"}
+    session['cartNames'] = {'Your items': "name"}
 
   if request.method == 'POST':
     session['search'] = request.form['search']    
@@ -166,6 +167,7 @@ def All():
 
     
     session['cart'][itemid] = quantity
+    session['cartNames'][itemid] = request.form['itemname']
     session.modified = True
 
   connection = sqlite3.connect("myDatabase.db")
@@ -188,8 +190,12 @@ def checkout():
   cursor = connection.cursor()
   
   keys = session['cart'].keys()
-  if keys is None:
-    return redirect('/logout')
+  cursor.execute("SELECT name FROM items WHERE id IN (?)", (list(keys)[0],))
+  names = cursor.fetchall()
+  #print("DEBUG: names?" + str(session['cartNames'][0]))
+  if len(keys) <= 1:
+    flash("Your cart is empty. Please add items to your cart before checking out.")
+    return redirect('/Cart')
   else:
     q = session['q']
     #for k in range(len(list(keys))):
@@ -200,7 +206,8 @@ def checkout():
   values=cursor.fetchall()    
   connection.commit()
   connection.close()
-  return redirect('/logout')
+  flash("Thank you for your purchase! Your order will be shipped to your address on file.")
+  return redirect('/home')
 
 @app.route('/search')
 def search():
@@ -227,17 +234,20 @@ def Cart():
 
   session.modified = True
   keys = session['cart'].keys()
-  if keys is None:
+  if len(keys) == 0:
+    flash("Your cart is empty. Please add items to your cart before checking out.")
     cursor.execute("SELECT * FROM items")
-  else:
-    cursor.execute("SELECT * FROM items WHERE id IN (?)", (list(keys)[0],))
+  #else:
+    #cursor.execute("SELECT * FROM items WHERE id IN (?)", (list(keys)[0],))
+  cursor.execute("SELECT name FROM items WHERE id IN (?)", (list(keys)[0],))
+  names = cursor.fetchall()
   values=cursor.fetchall()    
   connection.commit()
   connection.close()
 
 
 
-  return render_template("Cart.html", values = values, keys = keys)
+  return render_template("Cart.html", values = values, keys = keys, names = names)
 
 
 
