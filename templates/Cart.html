@@ -8,11 +8,22 @@
 
 </head>
 <body1>
-    {%for key in keys %}
-        <ul>{{key}}: {{session['cart'][key]}}
+    {%for i in keys %}
+        <ul>{{session['cartNames'][i]}}: {{session['cart'][i]}}
         </ul>
     {%endfor%}
     <br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <class=flashes>
+                    {% for category, message in messages %}
+                        <class="{{ category }}">{{ message }}
+                    {% endfor %}
+              
+            {% endif %}
+        {% endwith %}
+        <br>
+
     <a href="/checkout">Checkout?</a><br>
     <a href="/All">Keep shopping? Change quantities?</a><br>
 

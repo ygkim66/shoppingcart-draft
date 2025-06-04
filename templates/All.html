@@ -23,6 +23,7 @@
             Select Quantity: 
             <form action= "/All" method="POST">
                 <input type="hidden" name="prod" value="{{ value['id'] }}">
+                <input type="hidden" name="itemname" value="{{ value['name'] }}">
                 <input type="number" name="quantity" id="quantity" value="1" min="0" max="{{ value['stock'] }}" required>
                 <button type="submit">Add to Cart</button>
             </form>
